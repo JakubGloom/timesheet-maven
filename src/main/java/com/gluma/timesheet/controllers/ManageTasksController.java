@@ -171,9 +171,7 @@ public class ManageTasksController implements Initializable {
             stageKeywords.show();
             stageKeywords.setResizable(false);
 
-            ManageTasksController manageTasksController = fxmlLoader.getController();
-
-            stageKeywords.setOnCloseRequest(eventClose -> manageTasksController.openWorkdayScene(event));
+            stageKeywords.setOnCloseRequest(eventClose -> openWorkdayScene(event));
             ((Node)(event.getSource())).getScene().getWindow().hide();
         } catch(Exception e) {
             e.printStackTrace();

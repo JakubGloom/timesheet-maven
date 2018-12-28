@@ -1,12 +1,11 @@
 package com.gluma.timesheet.controllers;
 
+import com.gluma.timesheet.datamdodel.*;
 import com.gluma.timesheet.services.dao.EmployeeDAO;
 import com.gluma.timesheet.services.dao.EventDAO;
 import com.gluma.timesheet.services.dao.TaskDAO;
-import com.gluma.timesheet.datamdodel.*;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTimePicker;
-import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,7 +18,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-
 
 import java.io.IOException;
 import java.net.URL;
@@ -131,13 +129,15 @@ public class WorkdayController implements Initializable {
         localDate = LocalDate.now();
         System.out.println(localDate);
         buttonsController(EmployeeDAO.validateEmployeeAcount(Employee.loggedEmployee.getIdEmployee()));
-        loadEventData(localDate);
+        Thread loadData = new Thread(() -> loadEventData(localDate));
+        loadData.start();
         loadTasks();
         initializeLoggedEmployeeData();
     }
 
     private void loadEventData(LocalDate localDate) {
         try {
+            System.out.println(Thread.currentThread());
             ObservableList<Event> eventData = EventDAO.searchEvents(localDate);
             tableEvents.setItems(eventData);
         }catch(SQLException e){
@@ -298,7 +298,6 @@ public class WorkdayController implements Initializable {
 
     @FXML
     public void send(){
-        Platform.runLater(() -> {
             if (!tableEvents.getItems().isEmpty()) {
                 try {
                     ObservableList<Event> toSend = tableEvents.getItems();
@@ -308,10 +307,9 @@ public class WorkdayController implements Initializable {
                 }
                 loadEventData(localDate);
             }
-            else{
+            else {
                 Actions.showInfo("No events to send");
             }
-        });
 
     }
 
@@ -355,21 +353,20 @@ public class WorkdayController implements Initializable {
     }
 
     public  void openWorkdayScene(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/Workday.fxml"));
-            Parent root = loader.load();
+        try{ FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/Workday.fxml"));
+        Parent root = loader.load();
+        Stage stageWorkday = new Stage();
+        stageWorkday.setScene(new Scene(root));
+        stageWorkday.setResizable(false);
+        stageWorkday.show();
 
-            Stage stageWorkday = new Stage();
-            stageWorkday.setScene(new Scene(root));
-            stageWorkday.setResizable(false);
-            stageWorkday.show();
+        //stageWorkday.setOnCloseRequest(eventClose -> send());
 
-            WorkdayController workdayController = loader.getController();
-            stageWorkday.setOnCloseRequest(eventClose -> workdayController.send());
-
-            ((Node) (event.getSource())).getScene().getWindow().hide();
-        } catch (IOException e) {
-            e.printStackTrace();
+        ((Node) (event.getSource())).getScene().getWindow().hide();
+        }
+        catch (IOException e){
+            System.out.println(e);
         }
     }
+
 }

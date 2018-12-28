@@ -3,20 +3,16 @@ package com.gluma.timesheet.controllers;
 import com.gluma.timesheet.conectivity.ConnectionManager;
 import com.gluma.timesheet.datamdodel.Employee;
 import com.gluma.timesheet.services.dao.EmployeeDAO;
-import com.gluma.timesheet.datamdodel.StageManager;
+import com.gluma.timesheet.utils.PreferencesUtils;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.net.URL;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -36,16 +32,29 @@ public class LoginController implements Initializable {
     @FXML
     private JFXPasswordField passwordFieldPassword;
 
+    @FXML
+    private JFXCheckBox checkBocRememberMe;
+
+    @FXML
+    private JFXButton loginButton;
+
     private ResultSet result;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        if (PreferencesUtils.checkIfRemembered()) {
+            checkBocRememberMe.setSelected(true);
+            textFieldLogin.setText(PreferencesUtils.preferences.get("username", null));
+        }else {
+            checkBocRememberMe.setSelected(false);
+        }
     }
 
     @FXML
-    public void onButtonClicked(ActionEvent event) {
+    public void login(ActionEvent event) {
         try {
             if (isLoginValid()) {
+                PreferencesUtils.rememberMe(checkBocRememberMe,textFieldLogin);
                 System.out.println("Login success");
                 openWorkdayScene(event);
             } else {
@@ -63,7 +72,7 @@ public class LoginController implements Initializable {
         }
     }
 
-    private boolean isLoginValid() throws Exception {
+    private boolean isLoginValid() {
         try (PreparedStatement loginQuery = ConnectionManager.dbConnect().prepareStatement("SELECT idEmployee FROM employee WHERE Login=? AND Password=?")) {
             loginQuery.setString(1, textFieldLogin.getText());
             loginQuery.setString(2, passwordFieldPassword.getText());

@@ -1,8 +1,10 @@
 package com.gluma.timesheet.controllers;
 
+import com.gluma.timesheet.datamdodel.Employee;
+import com.gluma.timesheet.datamdodel.Event;
+import com.gluma.timesheet.datamdodel.Task;
 import com.gluma.timesheet.services.dao.EmployeeDAO;
 import com.gluma.timesheet.services.dao.EventDAO;
-import com.gluma.timesheet.datamdodel.*;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTreeTableView;
 import javafx.collections.ObservableList;
@@ -18,7 +20,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -105,7 +106,7 @@ public class ReportDateController implements Initializable {
         TreeItem<Event> itemRoot = new TreeItem<>();
         ObservableList<Employee> selectedEmployees = tableViewEmployeeToPick.getSelectionModel().getSelectedItems();
 
-        for (Employee selectedEmployee: selectedEmployees) { ;
+        for (Employee selectedEmployee: selectedEmployees) {
             Event eventsFromEmployee = new Event(selectedEmployee);
             TreeItem<Event> itemBranch = new TreeItem<>(eventsFromEmployee);
 
@@ -132,12 +133,7 @@ public class ReportDateController implements Initializable {
                 }
             }
 
-            for (Event event : employeeEventsToSum.values()) {
-                TreeItem<Event> events;
-                events = new TreeItem<>(event);
-                System.out.println(events.toString());
-                eventsToInsert.add(events);
-            }
+            addingItems(employeeEventsToSum, eventsToInsert);
 
             itemBranch.getChildren().setAll(eventsToInsert);
             itemRoot.getChildren().add(itemBranch);
@@ -179,12 +175,7 @@ public class ReportDateController implements Initializable {
                 }
             }
 
-            for (Event event : employeeEventsToSum.values()) {
-                TreeItem<Event> events;
-                events = new TreeItem<>(event);
-                System.out.println(events.toString());
-                eventsToInsert.add(events);
-            }
+            addingItems(employeeEventsToSum, eventsToInsert);
 
             itemBranch.getChildren().setAll(eventsToInsert);
             itemRoot.getChildren().add(itemBranch);
@@ -205,12 +196,19 @@ public class ReportDateController implements Initializable {
             stageReportDaily.show();
             stageReportDaily.setResizable(false);
 
-            ReportDateController reportDateController = fxmlLoader.getController();
-
-            stageReportDaily.setOnCloseRequest(eventClose -> reportDateController.openWorkdayScene(event));
+            stageReportDaily.setOnCloseRequest(eventClose -> openWorkdayScene(event));
             ((Node)(event.getSource())).getScene().getWindow().hide();
         } catch(Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void addingItems(HashMap<String, Event> employeeEventsToSum, ArrayList<TreeItem<Event>> eventsToInsert) {
+        for (Event event : employeeEventsToSum.values()) {
+            TreeItem<Event> events;
+            events = new TreeItem<>(event);
+            System.out.println(events.toString());
+            eventsToInsert.add(events);
         }
     }
 

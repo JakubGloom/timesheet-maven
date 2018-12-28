@@ -2,8 +2,8 @@ package com.gluma.timesheet.controllers;
 
 import com.gluma.timesheet.datamdodel.Access;
 import com.gluma.timesheet.datamdodel.Employee;
-import com.gluma.timesheet.services.dao.EmployeeDAO;
 import com.gluma.timesheet.datamdodel.StageManager;
+import com.gluma.timesheet.services.dao.EmployeeDAO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -175,8 +175,7 @@ public class ManageEmployeesController implements Initializable {
             stageEmployee.show();
             stageEmployee.setResizable(false);
 
-            ManageEmployeesController manageEmployeesController = fxmlLoader.getController();
-            stageEmployee.setOnCloseRequest(eventClose -> manageEmployeesController.openWorkdayScene(event));
+            stageEmployee.setOnCloseRequest(eventClose -> openWorkdayScene(event));
 
             ((Node) (event.getSource())).getScene().getWindow().hide();
         } catch (Exception e) {

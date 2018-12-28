@@ -1,8 +1,8 @@
 package com.gluma.timesheet.controllers;
 
 import com.gluma.timesheet.datamdodel.Employee;
-import com.gluma.timesheet.services.dao.EmployeeDAO;
 import com.gluma.timesheet.datamdodel.Event;
+import com.gluma.timesheet.services.dao.EmployeeDAO;
 import com.gluma.timesheet.services.dao.EventDAO;
 import com.jfoenix.controls.JFXDatePicker;
 import javafx.collections.ObservableList;
@@ -18,7 +18,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.net.URL;
 import java.security.Timestamp;
 import java.sql.SQLException;
@@ -112,7 +111,7 @@ public class ReportDailyController implements Initializable {
         TreeItem<Event> itemRoot = new TreeItem<>();
         ObservableList<Employee> selectedEmployees = tableViewEmployeeToPick.getSelectionModel().getSelectedItems();
 
-        for (Employee selectedEmployee: selectedEmployees) { ;
+        for (Employee selectedEmployee: selectedEmployees) {
             Event eventsFromEmployee = new Event(selectedEmployee);
             TreeItem<Event> itemBranch = new TreeItem<>(eventsFromEmployee);
 
@@ -182,9 +181,7 @@ public class ReportDailyController implements Initializable {
             stageReportDaily.show();
             stageReportDaily.setResizable(false);
 
-            ReportDailyController reportDailyController = fxmlLoader.getController();
-
-            stageReportDaily.setOnCloseRequest(eventClose -> reportDailyController.openWorkdayScene(event));
+            stageReportDaily.setOnCloseRequest(eventClose -> openWorkdayScene(event));
             ((Node)(event.getSource())).getScene().getWindow().hide();
         } catch(Exception e) {
             e.printStackTrace();
