@@ -1,4 +1,4 @@
-package com.gluma.timesheet.datamdodel;
+package com.gluma.timesheet.utils;
 
 import javafx.stage.Stage;
 

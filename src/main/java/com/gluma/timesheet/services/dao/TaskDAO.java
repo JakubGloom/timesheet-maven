@@ -11,7 +11,7 @@ import java.sql.SQLException;
 public class TaskDAO {
 
 
-    public static ObservableList<Task> searchTasks() throws SQLException, ClassNotFoundException {
+    public static ObservableList<Task> searchTasks() throws SQLException {
 
         String selectStmt = "SELECT * FROM task";
 
@@ -39,7 +39,7 @@ public class TaskDAO {
         return taskList;
     }
 
-    public static void insertTask(String name, String description) throws SQLException, ClassNotFoundException {
+    public static void insertTask(String name, String description) throws SQLException {
 
         String insertTask = "INSERT INTO `databasetests`.`task` (`Name`, `Descirption`)VALUES" + "('" + name + "','" + description + "' )";
         try {
@@ -50,7 +50,7 @@ public class TaskDAO {
         }
     }
 
-    public static void deleteTaskWithId(int idTask) throws SQLException, ClassNotFoundException {
+    public static void deleteTaskWithId(int idTask) throws SQLException {
         String employeeStmt = "DELETE FROM task WHERE idTask= " + idTask;
 
         try {
@@ -69,8 +69,6 @@ public class TaskDAO {
             try {
                 ConnectionManager.dbExecuteUpdate(updateStmt);
             } catch (SQLException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }

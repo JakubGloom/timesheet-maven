@@ -1,6 +1,9 @@
 package com.gluma.timesheet.services.dao;
 
+import com.gluma.timesheet.conectivity.ConnectionManager;
+
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 
 public class AccountDAO {
@@ -39,4 +42,18 @@ public class AccountDAO {
         return accountsList;
     }
     */
+    public static int validateEmployeeAcount(int id){
+        String accountStmt = "SELECT idAcess FROM account WHERE idEmployee =" + id;
+
+        try {
+            ResultSet rsEmployees = ConnectionManager.dbExecuteQuery(accountStmt);
+            if (rsEmployees.next()){
+                int accesId = rsEmployees.getInt("idAcess");
+                return accesId;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
 }

@@ -1,14 +1,14 @@
 package com.gluma.timesheet.services.dao;
 
 import com.gluma.timesheet.conectivity.ConnectionManager;
-import com.gluma.timesheet.datamdodel.Actions;
 import com.gluma.timesheet.datamdodel.Employee;
 import com.gluma.timesheet.datamdodel.Event;
 import com.gluma.timesheet.datamdodel.Task;
+import com.gluma.timesheet.utils.Actions;
+import com.gluma.timesheet.utils.PreferencesUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableView;
-
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,7 +18,7 @@ public class EventDAO{
     
     
     
-    public static void insertEvent(Event eventToInsert) throws SQLException, ClassNotFoundException {
+    public static void insertEvent(Event eventToInsert) throws SQLException {
         String insertEvent = "INSERT INTO `databasetests`.`event` (`Start`, `End`, `Time`, `IsAccepted`, `idEmployee`, `idTask`) " +
                 "VALUES ('" + eventToInsert.getStartDate() + "', '" + eventToInsert.getEndDate() + "', '" + eventToInsert.getTime() + "', " +
                 "'" + eventToInsert.getIsAccepted() + "', '" + eventToInsert.getIdEmployee() + "', '" + eventToInsert.getTask().getIdTask() + "')";
@@ -32,7 +32,7 @@ public class EventDAO{
 
     }
 
-    public static void deleteEvent(int idEvent) throws SQLException, ClassNotFoundException {
+    public static void deleteEvent(int idEvent) throws SQLException {
         String eventStatement = "DELETE FROM event WHERE idEvent= " + idEvent;
         try {
             ConnectionManager.dbExecuteUpdate(eventStatement);
@@ -92,13 +92,11 @@ public class EventDAO{
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         }
         return true;
     }
 
-    public static ObservableList<Event> singleReport(Employee selectedEmployee, LocalDate localDate) throws SQLException, ClassNotFoundException {
+    public static ObservableList<Event> singleReport(Employee selectedEmployee, LocalDate localDate) throws SQLException {
 
         String reportStmt = "SELECT idEvent, employee.Name, employee.Surname, task.name, Start, End, Time " +
                 "FROM event INNER JOIN task ON event.idTask=task.idTask " +
@@ -114,12 +112,10 @@ public class EventDAO{
         } catch (SQLException e) {
             System.out.println("SQL select operation has been failed: " + e);
             throw e;
-        } catch (ClassNotFoundException e){
-            throw e;
         }
     }
 
-    public static ObservableList<Event> singleDateToDateReport(Employee selectedEmployee, LocalDate from, LocalDate to) throws SQLException, ClassNotFoundException {
+    public static ObservableList<Event> singleDateToDateReport(Employee selectedEmployee, LocalDate from, LocalDate to) throws SQLException{
 
         String reportStmt = "SELECT idEvent, employee.Name, employee.Surname, task.name, Time " +
                 "FROM event INNER JOIN task ON event.idTask=task.idTask " +
@@ -135,15 +131,13 @@ public class EventDAO{
         } catch (SQLException e) {
             System.out.println("SQL select operation has been failed: " + e);
             throw e;
-        } catch (ClassNotFoundException e){
-            throw e;
         }
     }
 
-    public static ObservableList<Event> searchEvents(LocalDate localDate) throws SQLException, ClassNotFoundException {
+    public static ObservableList<Event> searchEvents(LocalDate localDate) throws SQLException{
 
         String selectStmt = "SELECT idEvent, task.name, Start, End, Time FROM event " +
-                "JOIN task ON event.idTask=task.idTask WHERE idEmployee=" + Employee.loggedEmployee.getIdEmployee() +
+                "JOIN task ON event.idTask=task.idTask WHERE idEmployee=" + PreferencesUtils.getNumber("idEmployee") +
                 " AND " + "Start>=" + "'" + localDate + " 00:00:00' "
                 + "AND " + "End<=" + "'" + localDate + " 23:59:59'";
         try {

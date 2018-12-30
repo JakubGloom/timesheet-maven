@@ -90,7 +90,7 @@ public class ReportDateController implements Initializable {
     }
 
     @FXML
-    private void loadEmployees() throws SQLException, ClassNotFoundException {
+    private void loadEmployees() throws SQLException {
         try {
             ObservableList<Employee> empData = EmployeeDAO.searchEmployeesNameSurnameId();
             tableViewEmployeeToPick.setItems(empData);
@@ -118,8 +118,6 @@ public class ReportDateController implements Initializable {
             try {
                 employeeEvents = EventDAO.singleDateToDateReport(selectedEmployee, datePickerFromDate.getValue(),datePickerToDate.getValue());
             } catch (SQLException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
 
@@ -160,8 +158,6 @@ public class ReportDateController implements Initializable {
             try {
                 employeeEvents = EventDAO.singleDateToDateReport(employeeToInsert,datePickerFromDate.getValue(),datePickerToDate.getValue());
             } catch (SQLException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
 

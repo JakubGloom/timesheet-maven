@@ -4,7 +4,7 @@ import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 import java.sql.Timestamp;
 
-public class Event extends RecursiveTreeObject<Event> {
+public class Event extends RecursiveTreeObject<Event> implements BaseModel {
 
     private int idEvent;
     private Timestamp startDate;

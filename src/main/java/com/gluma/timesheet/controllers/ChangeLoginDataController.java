@@ -1,8 +1,8 @@
 package com.gluma.timesheet.controllers;
 
-import com.gluma.timesheet.datamdodel.Actions;
 import com.gluma.timesheet.datamdodel.Employee;
 import com.gluma.timesheet.services.dao.EmployeeDAO;
+import com.gluma.timesheet.utils.Actions;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import javafx.fxml.FXML;
@@ -68,8 +68,6 @@ public class ChangeLoginDataController {
     }
 
     private boolean isNewLogin(){
-        if (!textFieldNewLogin.getText().isEmpty())
-            return true;
-        return false;
+        return !textFieldNewLogin.getText().isEmpty();
     }
 }

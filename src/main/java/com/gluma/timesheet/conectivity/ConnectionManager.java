@@ -2,36 +2,37 @@ package com.gluma.timesheet.conectivity;
 import com.github.vldrus.sql.rowset.CachedRowSetWrapper;
 
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ConnectionManager {
-    private static final String url = "jdbc:mysql://127.0.0.1:3306/databasetests?useSSL=false";
+    private static final Logger logger = Logger.getLogger(ConnectionManager.class.getName());
+    private static final String url = "jdbc:mysql://127.0.0.1:3306/databasetests?useSSL=false&useLegacyDatetimeCode=false&serverTimezone=Europe/Warsaw";
     private static final String username = "root";
     private static final String password = "Susanoo12345@";
     private static Connection con=null;
 
-    public static Connection dbConnect() throws SQLException, ClassNotFoundException {
+    public static Connection dbConnect(){
         try {
             con = DriverManager.getConnection(url, username, password);
         } catch (SQLException e) {
-            System.out.println("Connection Failed! Check output console" + e);
-            e.printStackTrace();
-            throw e;
+            logger.log(Level.SEVERE,"Connection Failed! Check output console",e);
         }
         return con;
     }
 
-    public static Connection dbDisconnect() throws SQLException {
+    public static Connection dbDisconnect() {
         try {
             if (con != null && !con.isClosed()) {
                 con.close();
             }
         } catch (Exception e) {
-            throw e;
+            logger.log(Level.SEVERE,"Something went wrong while disconnecting",e);
         }
         return con;
     }
 
-    public static ResultSet dbExecuteQuery(String queryStmt) throws SQLException, ClassNotFoundException {
+    public static ResultSet dbExecuteQuery(String queryStmt) throws SQLException {
         CachedRowSetWrapper crs;
         dbConnect();
         try (PreparedStatement stmt = con.prepareStatement(queryStmt);
@@ -40,13 +41,13 @@ public class ConnectionManager {
             crs = new CachedRowSetWrapper();
             crs.populate(resultSet);
         } catch (SQLException e) {
-            System.out.println("Problem occurred at executeQuery operation : " + e);
+            logger.log(Level.SEVERE,"Problem occurred at executeQuery operation",e);
             throw e;
         }finally{dbDisconnect();}
         return crs;
     }
 
-    public static void dbExecuteUpdate(String sqlStmt) throws SQLException, ClassNotFoundException {
+    public static void dbExecuteUpdate(String sqlStmt) throws SQLException{
         Statement stmt = null;
         try {
             dbConnect();
@@ -54,7 +55,7 @@ public class ConnectionManager {
 
             stmt.executeUpdate(sqlStmt);
         } catch (SQLException e) {
-            System.out.println("Problem occurred at executeUpdate operation : " + e);
+            logger.log(Level.SEVERE,"Problem occurred at executeUpdate operation",e);
             throw e;
         } finally {
             if (stmt != null) {
@@ -64,7 +65,7 @@ public class ConnectionManager {
         }
     }
 
-    public static int getId(String idEmployee) throws SQLException, ClassNotFoundException {
+    public static int getId(String idEmployee) throws SQLException{
         PreparedStatement pstmt = null;
         int id = 0;
         try{
@@ -78,8 +79,7 @@ public class ConnectionManager {
             }
         }
         catch (SQLException e){
-            System.out.println("Problem occured at getting id: " + e);
-            throw e;
+            logger.log(Level.SEVERE,"Problem occurred agetting id: ",e);
         }
         finally {
             if (pstmt != null) {

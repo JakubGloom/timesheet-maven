@@ -1,9 +1,13 @@
 package com.gluma.timesheet.controllers;
 
-import com.gluma.timesheet.datamdodel.*;
-import com.gluma.timesheet.services.dao.EmployeeDAO;
+import com.gluma.timesheet.datamdodel.Event;
+import com.gluma.timesheet.datamdodel.Task;
+import com.gluma.timesheet.services.dao.AccountDAO;
 import com.gluma.timesheet.services.dao.EventDAO;
 import com.gluma.timesheet.services.dao.TaskDAO;
+import com.gluma.timesheet.utils.Actions;
+import com.gluma.timesheet.utils.PreferencesUtils;
+import com.gluma.timesheet.utils.StageManager;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTimePicker;
 import javafx.collections.ObservableList;
@@ -108,7 +112,7 @@ public class WorkdayController implements Initializable {
     @FXML
     private TextArea textAreaDisplayDescription;
     private static LocalDate localDate;
-    private ObservableList<Event> eventData= null;
+    private Thread loadData;
 
     @Override
     public void initialize(URL location, ResourceBundle resources){
@@ -126,11 +130,13 @@ public class WorkdayController implements Initializable {
         timePickerStartTime.editableProperty().setValue(false);
         timePickerEndTime.setIs24HourView(true);
         timePickerEndTime.editableProperty().setValue(false);
+
         localDate = LocalDate.now();
-        System.out.println(localDate);
-        buttonsController(EmployeeDAO.validateEmployeeAcount(Employee.loggedEmployee.getIdEmployee()));
-        Thread loadData = new Thread(() -> loadEventData(localDate));
-        loadData.start();
+        buttonsController(AccountDAO.validateEmployeeAcount(PreferencesUtils.getNumber("idEmployee")));
+        datePickerAnotherDay.setValue(localDate);
+        //loadData = new Thread(() -> loadEventData(localDate));
+        //loadData.start();
+        loadEventData(localDate);
         loadTasks();
         initializeLoggedEmployeeData();
     }
@@ -141,8 +147,6 @@ public class WorkdayController implements Initializable {
             ObservableList<Event> eventData = EventDAO.searchEvents(localDate);
             tableEvents.setItems(eventData);
         }catch(SQLException e){
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -160,6 +164,18 @@ public class WorkdayController implements Initializable {
 
     @FXML
     private void logout(ActionEvent event){
+        /*if (loadData.isAlive()){
+            try {
+                loadData.join();
+                openLoginWindow(event);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }*/
+        openLoginWindow(event);
+    }
+
+    private void openLoginWindow(ActionEvent event){
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(LoginController.class.getResource("/views/login.fxml"));
             Parent root1 = fxmlLoader.load();
@@ -234,10 +250,10 @@ public class WorkdayController implements Initializable {
 
                 Task selectedTask = tableViewTasks.getSelectionModel().getSelectedItem();
 
-                Event eventToInsert = new Event(start, end, elapsedMinutes, 0, Employee.loggedEmployee.getIdEmployee(), selectedTask);
+                Event eventToInsert = new Event(start, end, elapsedMinutes, 0,1, selectedTask);
+                System.out.println(eventToInsert);
 
-                eventData.add(eventToInsert);
-
+                tableEvents.getItems().add(eventToInsert);
             }
             else{Actions.showAlert("Wrong time input");}
         }
@@ -269,7 +285,7 @@ public class WorkdayController implements Initializable {
     }
 
     public void initializeLoggedEmployeeData() {
-        String loggedUser = "Logged as: " + Employee.loggedEmployee.getName() + " " + Employee.loggedEmployee.getSurname();
+        String loggedUser = "Logged as: " + PreferencesUtils.getText("userName") + " " + PreferencesUtils.getText("userLastName");
         String today = "Today is: ";
         String date = String.valueOf(localDate);
         loggedUserName.setText(loggedUser);
@@ -360,7 +376,6 @@ public class WorkdayController implements Initializable {
         stageWorkday.setResizable(false);
         stageWorkday.show();
 
-        //stageWorkday.setOnCloseRequest(eventClose -> send());
 
         ((Node) (event.getSource())).getScene().getWindow().hide();
         }

@@ -14,10 +14,14 @@ public class PreferencesUtils {
         if(isChecked.isSelected()){
             System.out.println(isChecked.isSelected());
             preferences.putBoolean("rememberMe",true);
-            preferences.put("username",login.getText().trim());
+            preferences.put("login",login.getText().trim());
         }
         else{
-            preferences.putBoolean("rememberMe",false);
+            try {
+                preferences.clear();
+            } catch (BackingStoreException e) {
+                e.printStackTrace();
+            }
         }
         try {
             preferences.exportNode(new FileOutputStream("MyFile.xml"));
@@ -28,7 +32,28 @@ public class PreferencesUtils {
         }
 
     }
+    public static void loggedUserData(int id, String name, String surname,String password){
+        preferences.putInt("idEmployee",id);
+        preferences.put("userName", name);
+        preferences.put("userLastName", surname);
+        preferences.put("password",(Security.hashPassword(password)));
+
+
+    }
     public static boolean checkIfRemembered(){
-        return PreferencesUtils.preferences.getBoolean("rememberMe", true);
+        return PreferencesUtils.preferences.getBoolean("rememberMe", false);
+    }
+
+    public static String getText(String key){
+        String textToReturn = preferences.get(key,"error");
+        if (textToReturn.isEmpty()){
+            return "error";
+        }
+        return textToReturn;
+    }
+
+    public static int getNumber(String key){
+        int toReturn = preferences.getInt(key,-1);
+        return toReturn;
     }
 }

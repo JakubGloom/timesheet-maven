@@ -1,6 +1,6 @@
 package com.gluma.timesheet.datamdodel;
 
-public class Task {
+public class Task implements BaseModel{
     private int idTask;
     private String name;
     private String descirption;

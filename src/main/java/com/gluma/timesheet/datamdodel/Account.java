@@ -1,6 +1,6 @@
 package com.gluma.timesheet.datamdodel;
 
-public class Account{
+public class Account implements BaseModel{
     private Employee employee;
     private String access;
 

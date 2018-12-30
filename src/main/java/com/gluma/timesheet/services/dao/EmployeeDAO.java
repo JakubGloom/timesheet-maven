@@ -5,19 +5,16 @@ import com.gluma.timesheet.datamdodel.Employee;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Random;
 
-public class EmployeeDAO {
-private static Connection connection;
-private static ConnectionManager myConn;
+public class EmployeeDAO{
 private static ResultSet rsEmp;
 
 private static StringBuilder stringBuilder;
 
-    public static Employee searchEmployee (int empId) throws SQLException, ClassNotFoundException {
+    public static Employee searchEmployee (int empId) throws SQLException {
 
         String selectStmt = "SELECT * FROM employee WHERE idEmployee="+empId;
         try {
@@ -48,7 +45,7 @@ private static StringBuilder stringBuilder;
         return emp;
     }
 
-    public static ObservableList<Employee> searchEmployees () throws SQLException, ClassNotFoundException {
+    public static ObservableList<Employee> searchEmployees () throws SQLException {
 
         String selectStmt = "SELECT employee.idEmployee, employee.Name, employee.Surname, " +
                 "employee.Login, employee.Password, acess.Type " +
@@ -81,7 +78,7 @@ private static StringBuilder stringBuilder;
         return employeesList;
     }
 
-    public static void deleteEmployeeWithId (int idEmployee) throws SQLException, ClassNotFoundException {
+    public static void deleteEmployeeWithId (int idEmployee) throws SQLException {
         String employeeStmt ="DELETE FROM employee WHERE idEmployee= "+ idEmployee;
 
         try {
@@ -92,7 +89,7 @@ private static StringBuilder stringBuilder;
         }
     }
 
-    public static void insertEmployee (String name, String surname, int idAccess) throws SQLException, ClassNotFoundException {
+    public static void insertEmployee (String name, String surname, int idAccess) throws SQLException {
 
         String insertEmployee = "INSERT INTO `databasetests`.`employee` (`Name`, `Surname`, `Login`, `Password`, `Seed`) VALUES " +
                 "('"+name+"','"+surname+"','"+generateTemporyLoginData()+"','"+generateTemporyLoginData()+"','"+generateSeed()+"')";
@@ -148,8 +145,6 @@ private static StringBuilder stringBuilder;
                 ConnectionManager.dbExecuteUpdate(updateStmt);
             } catch (SQLException e) {
                 e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
             }
         }
 
@@ -163,8 +158,6 @@ private static StringBuilder stringBuilder;
             ConnectionManager.dbExecuteUpdate(updateStmt);
         } catch (SQLException e) {
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         }
     }
 
@@ -175,8 +168,6 @@ private static StringBuilder stringBuilder;
         try {
             ConnectionManager.dbExecuteUpdate(updateStmt);
         } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -189,12 +180,10 @@ private static StringBuilder stringBuilder;
             ConnectionManager.dbExecuteUpdate(updateStmt);
         } catch (SQLException e) {
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         }
     }
 
-    public static ObservableList<Employee> searchEmployeesNameSurnameId () throws SQLException, ClassNotFoundException {
+    public static ObservableList<Employee> searchEmployeesNameSurnameId () throws SQLException {
 
         String selectStmt = "SELECT idEmployee, Name, Surname FROM employee";
 
@@ -219,22 +208,5 @@ private static StringBuilder stringBuilder;
             employeesList.add(employee);
         }
         return employeesList;
-    }
-
-    public static int validateEmployeeAcount(int id){
-        String accountStmt = "SELECT idAcess FROM account WHERE idEmployee =" + id;
-
-        try {
-            ResultSet rsEmployees = ConnectionManager.dbExecuteQuery(accountStmt);
-            if (rsEmployees.next()){
-                int accesId = rsEmployees.getInt("idAcess");
-                return accesId;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return -1;
     }
 }

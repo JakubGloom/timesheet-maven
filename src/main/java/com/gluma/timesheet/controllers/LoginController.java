@@ -4,6 +4,7 @@ import com.gluma.timesheet.conectivity.ConnectionManager;
 import com.gluma.timesheet.datamdodel.Employee;
 import com.gluma.timesheet.services.dao.EmployeeDAO;
 import com.gluma.timesheet.utils.PreferencesUtils;
+import com.gluma.timesheet.utils.Security;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXPasswordField;
@@ -18,6 +19,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
+import java.util.prefs.BackingStoreException;
 
 public class LoginController implements Initializable {
 
@@ -44,7 +46,7 @@ public class LoginController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         if (PreferencesUtils.checkIfRemembered()) {
             checkBocRememberMe.setSelected(true);
-            textFieldLogin.setText(PreferencesUtils.preferences.get("username", null));
+            textFieldLogin.setText(PreferencesUtils.getText("login"));
         }else {
             checkBocRememberMe.setSelected(false);
         }
@@ -73,13 +75,22 @@ public class LoginController implements Initializable {
     }
 
     private boolean isLoginValid() {
-        try (PreparedStatement loginQuery = ConnectionManager.dbConnect().prepareStatement("SELECT idEmployee FROM employee WHERE Login=? AND Password=?")) {
+        try (PreparedStatement loginQuery = ConnectionManager.dbConnect().prepareStatement("SELECT idEmployee,Password FROM employee WHERE Login=?")) {
+            try {
+                PreferencesUtils.preferences.clear();
+            } catch (BackingStoreException e) {
+                e.printStackTrace();
+            }
             loginQuery.setString(1, textFieldLogin.getText());
-            loginQuery.setString(2, passwordFieldPassword.getText());
             result = loginQuery.executeQuery();
             if(result.next()) {
-                Employee.loggedEmployee = EmployeeDAO.searchEmployee(result.getInt("idEmployee"));
-                return true;
+                System.out.println(result.getString("Password"));
+                if (Security.checkPassword(passwordFieldPassword.getText(),result.getString("Password"))) {
+                    Employee employee = EmployeeDAO.searchEmployee(result.getInt("idEmployee"));
+                    System.out.println(employee);
+                    PreferencesUtils.loggedUserData(employee.getIdEmployee(), employee.getName() ,employee.getSurname(), employee.getPassword());
+                    return true;
+                }
             }
             } catch (SQLException e) {
                 this.noConnection = true;

@@ -1,9 +1,9 @@
 package com.gluma.timesheet.controllers;
 
-import com.gluma.timesheet.datamdodel.Actions;
-import com.gluma.timesheet.datamdodel.StageManager;
 import com.gluma.timesheet.datamdodel.Task;
 import com.gluma.timesheet.services.dao.TaskDAO;
+import com.gluma.timesheet.utils.Actions;
+import com.gluma.timesheet.utils.StageManager;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -68,8 +68,6 @@ public class ManageTasksController implements Initializable {
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
             }
         }
     }
@@ -107,7 +105,7 @@ public class ManageTasksController implements Initializable {
     }
 
     @FXML
-    private void loadTasks() throws SQLException, ClassNotFoundException {
+    private void loadTasks() throws SQLException {
         ObservableList<Task> taskData = TaskDAO.searchTasks();
         tableViewTask.setItems(taskData);
     }
@@ -120,8 +118,6 @@ public class ManageTasksController implements Initializable {
             try {
                 TaskDAO.deleteTaskWithId(selectedRowID);
             } catch (SQLException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
             Task selectedTask = tableViewTask.getSelectionModel().getSelectedItem();

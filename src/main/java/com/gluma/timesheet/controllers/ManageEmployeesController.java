@@ -2,8 +2,8 @@ package com.gluma.timesheet.controllers;
 
 import com.gluma.timesheet.datamdodel.Access;
 import com.gluma.timesheet.datamdodel.Employee;
-import com.gluma.timesheet.datamdodel.StageManager;
 import com.gluma.timesheet.services.dao.EmployeeDAO;
+import com.gluma.timesheet.utils.StageManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -75,8 +75,6 @@ public class ManageEmployeesController implements Initializable {
                 System.out.println("pracownik został dodadny pomyślnie");
             } catch (SQLException e) {
                 e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
             }
         }
     }
@@ -113,7 +111,7 @@ public class ManageEmployeesController implements Initializable {
     }
 
     @FXML
-    private void loadEmployees() throws SQLException, ClassNotFoundException {
+    private void loadEmployees() throws SQLException {
         try {
             ObservableList<Employee> empData = EmployeeDAO.searchEmployees();
             tableViewEmployees.setItems(empData);
@@ -130,8 +128,6 @@ public class ManageEmployeesController implements Initializable {
             try {
                 EmployeeDAO.deleteEmployeeWithId(selectedRowID);
             } catch (SQLException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
             Employee selectedEmployee = tableViewEmployees.getSelectionModel().getSelectedItem();
