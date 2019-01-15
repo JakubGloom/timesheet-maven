@@ -1,10 +1,10 @@
 package com.gluma.timesheet.controllers;
 
+import com.gluma.timesheet.dao.AccountDAO;
+import com.gluma.timesheet.dao.EventDAO;
+import com.gluma.timesheet.dao.TaskDAO;
 import com.gluma.timesheet.datamdodel.Event;
 import com.gluma.timesheet.datamdodel.Task;
-import com.gluma.timesheet.services.dao.AccountDAO;
-import com.gluma.timesheet.services.dao.EventDAO;
-import com.gluma.timesheet.services.dao.TaskDAO;
 import com.gluma.timesheet.utils.Actions;
 import com.gluma.timesheet.utils.PreferencesUtils;
 import com.gluma.timesheet.utils.StageManager;
@@ -31,6 +31,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 
 public class WorkdayController implements Initializable {
 
@@ -111,6 +112,8 @@ public class WorkdayController implements Initializable {
 
     @FXML
     private TextArea textAreaDisplayDescription;
+
+    private static final Logger logger = Logger.getLogger(WorkdayController.class.getName());
     private static LocalDate localDate;
     private Thread loadData;
 
@@ -156,8 +159,6 @@ public class WorkdayController implements Initializable {
             ObservableList<Task> taskData = TaskDAO.searchTasks();
             tableViewTasks.setItems(taskData);
         } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -277,9 +278,8 @@ public class WorkdayController implements Initializable {
             EventDAO.deleteEvent(idEventToDelete);
         } catch (SQLException e) {
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         }
+
         Event selectedEvent = tableEvents.getSelectionModel().getSelectedItem();
         tableEvents.getItems().remove(selectedEvent);
     }
@@ -342,7 +342,8 @@ public class WorkdayController implements Initializable {
     }
 
     private void buttonsController(int id){
-        switch (id) {
+        logger.info(String.valueOf(id));
+        switch(id){
             case 1:
                 buttonReportDaily.setVisible(false);
                 buttonReportDaily.setDisable(true);

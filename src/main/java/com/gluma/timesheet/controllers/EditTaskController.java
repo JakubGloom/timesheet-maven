@@ -1,7 +1,7 @@
 package com.gluma.timesheet.controllers;
 
+import com.gluma.timesheet.dao.TaskDAO;
 import com.gluma.timesheet.datamdodel.Task;
-import com.gluma.timesheet.services.dao.TaskDAO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;

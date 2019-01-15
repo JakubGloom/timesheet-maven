@@ -1,7 +1,7 @@
 package com.gluma.timesheet.controllers;
 
+import com.gluma.timesheet.dao.TaskDAO;
 import com.gluma.timesheet.datamdodel.Task;
-import com.gluma.timesheet.services.dao.TaskDAO;
 import com.gluma.timesheet.utils.Actions;
 import com.gluma.timesheet.utils.StageManager;
 import javafx.collections.ObservableList;
@@ -51,8 +51,6 @@ public class ManageTasksController implements Initializable {
         try {
             loadTasks();
         } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }

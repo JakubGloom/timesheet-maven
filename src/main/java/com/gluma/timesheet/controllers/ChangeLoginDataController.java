@@ -1,8 +1,9 @@
 package com.gluma.timesheet.controllers;
 
-import com.gluma.timesheet.datamdodel.Employee;
-import com.gluma.timesheet.services.dao.EmployeeDAO;
+import com.gluma.timesheet.dao.EmployeeDAO;
 import com.gluma.timesheet.utils.Actions;
+import com.gluma.timesheet.utils.PreferencesUtils;
+import com.gluma.timesheet.utils.Security;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import javafx.fxml.FXML;
@@ -25,10 +26,10 @@ public class ChangeLoginDataController {
     private void change(){
         if (validateOldPassword()&& validateNewPasswords()) {
             if (isNewLogin()) {
-                EmployeeDAO.updateEmployeePasswordAndLogin(textFieldNewLogin.getText(), passwordFieldNewPassword.getText());
+                EmployeeDAO.updateEmployeePasswordAndLogin(textFieldNewLogin.getText(), Security.hashPassword(passwordFieldNewPassword.getText()));
                 Actions.showInfo("Successfully changed to a new password and login");
             }else{
-                EmployeeDAO.updateEmployeePassword(passwordFieldNewPassword.getText());
+                EmployeeDAO.updateEmployeePassword(Security.hashPassword(passwordFieldNewPassword.getText()));
                 Actions.showInfo("Successfully changed to a new password");
             }
         }
@@ -42,7 +43,9 @@ public class ChangeLoginDataController {
 
     private boolean validateOldPassword(){
        if (!passwordFieldOldPassword.getText().isEmpty()) {
-           if (passwordFieldOldPassword.getText().equals(Employee.loggedEmployee.getPassword())) {
+           System.out.println(PreferencesUtils.preferences.get("password",null));
+           System.out.println(passwordFieldOldPassword.getText());
+           if (Security.checkPassword(passwordFieldOldPassword.getText(),PreferencesUtils.getText("password"))) {
                return true;
            }
            else{

@@ -1,9 +1,9 @@
 package com.gluma.timesheet.controllers;
 
+import com.gluma.timesheet.dao.EmployeeDAO;
+import com.gluma.timesheet.dao.EventDAO;
 import com.gluma.timesheet.datamdodel.Employee;
 import com.gluma.timesheet.datamdodel.Event;
-import com.gluma.timesheet.services.dao.EmployeeDAO;
-import com.gluma.timesheet.services.dao.EventDAO;
 import com.jfoenix.controls.JFXDatePicker;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -89,7 +89,7 @@ public class ReportDailyController implements Initializable {
     }
 
     @FXML
-    private void loadEmployees() throws SQLException, ClassNotFoundException {
+    private void loadEmployees() throws SQLException {
         try {
             ObservableList<Employee> empData = EmployeeDAO.searchEmployeesNameSurnameId();
             tableViewEmployeeToPick.setItems(empData);
@@ -122,8 +122,6 @@ public class ReportDailyController implements Initializable {
                 employeeEvents = EventDAO.singleReport(selectedEmployee, datePickedPickDateForReport.getValue());
             } catch (SQLException e) {
                 e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
             }
 
             for (Event eventToInsert: employeeEvents) {
@@ -153,8 +151,6 @@ public class ReportDailyController implements Initializable {
             try {
                 employeeEvents = EventDAO.singleReport(employeeToInsert,datePickedPickDateForReport.getValue());
             } catch (SQLException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
 

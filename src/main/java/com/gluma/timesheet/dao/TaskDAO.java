@@ -1,4 +1,4 @@
-package com.gluma.timesheet.services.dao;
+package com.gluma.timesheet.dao;
 
 import com.gluma.timesheet.conectivity.ConnectionManager;
 import com.gluma.timesheet.datamdodel.Task;

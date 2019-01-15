@@ -1,8 +1,8 @@
 package com.gluma.timesheet.controllers;
 
+import com.gluma.timesheet.dao.EmployeeDAO;
 import com.gluma.timesheet.datamdodel.Access;
 import com.gluma.timesheet.datamdodel.Employee;
-import com.gluma.timesheet.services.dao.EmployeeDAO;
 import com.gluma.timesheet.utils.StageManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

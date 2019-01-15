@@ -1,4 +1,4 @@
-package com.gluma.timesheet.services.dao;
+package com.gluma.timesheet.dao;
 
 import com.gluma.timesheet.conectivity.ConnectionManager;
 
@@ -49,6 +49,7 @@ public class AccountDAO {
             ResultSet rsEmployees = ConnectionManager.dbExecuteQuery(accountStmt);
             if (rsEmployees.next()){
                 int accesId = rsEmployees.getInt("idAcess");
+                System.out.println(accesId);
                 return accesId;
             }
         } catch (SQLException e) {

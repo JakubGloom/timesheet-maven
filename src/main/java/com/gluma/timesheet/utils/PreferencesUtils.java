@@ -36,7 +36,7 @@ public class PreferencesUtils {
         preferences.putInt("idEmployee",id);
         preferences.put("userName", name);
         preferences.put("userLastName", surname);
-        preferences.put("password",(Security.hashPassword(password)));
+        preferences.put("password",password);
 
 
     }

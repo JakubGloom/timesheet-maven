@@ -1,10 +1,10 @@
 package com.gluma.timesheet.controllers;
 
+import com.gluma.timesheet.dao.EmployeeDAO;
+import com.gluma.timesheet.dao.EventDAO;
 import com.gluma.timesheet.datamdodel.Employee;
 import com.gluma.timesheet.datamdodel.Event;
 import com.gluma.timesheet.datamdodel.Task;
-import com.gluma.timesheet.services.dao.EmployeeDAO;
-import com.gluma.timesheet.services.dao.EventDAO;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTreeTableView;
 import javafx.collections.ObservableList;
@@ -78,9 +78,7 @@ public class ReportDateController implements Initializable {
             loadEmployees();
         } catch (SQLException e) {
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        } 
     }
 
     @FXML

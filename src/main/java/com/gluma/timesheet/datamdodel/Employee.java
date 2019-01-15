@@ -13,8 +13,6 @@ public class Employee implements Serializable,BaseModel{
     private int seed;
     private String fullName;
 
-    public static Employee loggedEmployee;
-
     public Employee(){}
     public Employee(int idEmployee, String name, String surname, String login, String password) {
         this.idEmployee = idEmployee;

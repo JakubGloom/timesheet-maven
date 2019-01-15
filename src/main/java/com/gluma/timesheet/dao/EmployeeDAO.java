@@ -1,7 +1,8 @@
-package com.gluma.timesheet.services.dao;
+package com.gluma.timesheet.dao;
 
 import com.gluma.timesheet.conectivity.ConnectionManager;
 import com.gluma.timesheet.datamdodel.Employee;
+import com.gluma.timesheet.utils.PreferencesUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -152,7 +153,7 @@ private static StringBuilder stringBuilder;
 
     public static void updateEmployeePasswordAndLogin(String login, String password){
 
-        String updateStmt = "UPDATE employee SET Login = '"+login+"', Password = '"+password+"' WHERE idEmployee = '"+Employee.loggedEmployee.getIdEmployee()+"'";
+        String updateStmt = "UPDATE employee SET Login = '"+login+"', Password = '"+password+"' WHERE idEmployee = '"+PreferencesUtils.preferences.getInt("idEmployee",-1)+"'";
 
         try {
             ConnectionManager.dbExecuteUpdate(updateStmt);
@@ -163,7 +164,7 @@ private static StringBuilder stringBuilder;
 
     public static void updateEmployeeLogin(String login){
 
-        String updateStmt = "UPDATE employee SET Login = '"+login+"' WHERE idEmployee = '"+Employee.loggedEmployee.getIdEmployee()+"'";
+        String updateStmt = "UPDATE employee SET Login = '"+login+"' WHERE idEmployee = '"+PreferencesUtils.preferences.getInt("idEmployee",-1)+"'";
 
         try {
             ConnectionManager.dbExecuteUpdate(updateStmt);
@@ -174,7 +175,7 @@ private static StringBuilder stringBuilder;
 
     public static void updateEmployeePassword(String password){
 
-        String updateStmt = "UPDATE employee SET Password = '"+password+"' WHERE idEmployee = '"+Employee.loggedEmployee.getIdEmployee()+"'";
+        String updateStmt = "UPDATE employee SET Password = '"+password+"' WHERE idEmployee = '"+PreferencesUtils.preferences.getInt("idEmployee",-1)+"'";
 
         try {
             ConnectionManager.dbExecuteUpdate(updateStmt);

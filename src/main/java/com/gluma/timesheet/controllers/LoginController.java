@@ -1,8 +1,8 @@
 package com.gluma.timesheet.controllers;
 
 import com.gluma.timesheet.conectivity.ConnectionManager;
+import com.gluma.timesheet.dao.EmployeeDAO;
 import com.gluma.timesheet.datamdodel.Employee;
-import com.gluma.timesheet.services.dao.EmployeeDAO;
 import com.gluma.timesheet.utils.PreferencesUtils;
 import com.gluma.timesheet.utils.Security;
 import com.jfoenix.controls.JFXButton;
@@ -41,6 +41,8 @@ public class LoginController implements Initializable {
     private JFXButton loginButton;
 
     private ResultSet result;
+
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(LoginController.class.getName());
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -84,10 +86,9 @@ public class LoginController implements Initializable {
             loginQuery.setString(1, textFieldLogin.getText());
             result = loginQuery.executeQuery();
             if(result.next()) {
-                System.out.println(result.getString("Password"));
+                logger.info(result.getString("Password"));
                 if (Security.checkPassword(passwordFieldPassword.getText(),result.getString("Password"))) {
                     Employee employee = EmployeeDAO.searchEmployee(result.getInt("idEmployee"));
-                    System.out.println(employee);
                     PreferencesUtils.loggedUserData(employee.getIdEmployee(), employee.getName() ,employee.getSurname(), employee.getPassword());
                     return true;
                 }
@@ -95,9 +96,8 @@ public class LoginController implements Initializable {
             } catch (SQLException e) {
                 this.noConnection = true;
                 e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } finally{
+            }
+            finally{
             try{result.close();}catch(SQLException e){}
         }
         return false;
