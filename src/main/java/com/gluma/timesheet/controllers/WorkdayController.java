@@ -75,16 +75,16 @@ public class WorkdayController implements Initializable {
     private TableView<Event> tableEvents;
 
     @FXML
-    private TableColumn<Event,String> columnName;
+    private TableColumn<Event, String> columnName;
 
     @FXML
-    private TableColumn<Event,Timestamp> columnStart;
+    private TableColumn<Event, Timestamp> columnStart;
 
     @FXML
-    private TableColumn<Event,Timestamp> columnEndDate;
+    private TableColumn<Event, Timestamp> columnEndDate;
 
     @FXML
-    private TableColumn<Event,Integer> columnTime;
+    private TableColumn<Event, Integer> columnTime;
 
     @FXML
     private TableColumn<Event, Integer> columnIDEv;
@@ -118,7 +118,7 @@ public class WorkdayController implements Initializable {
     private Thread loadData;
 
     @Override
-    public void initialize(URL location, ResourceBundle resources){
+    public void initialize(URL location, ResourceBundle resources) {
         columnIDEv.setCellValueFactory(new PropertyValueFactory<>("idEvent"));
         columnName.setCellValueFactory(new PropertyValueFactory<>("task"));
         columnStart.setCellValueFactory(new PropertyValueFactory<>("startDate"));
@@ -149,7 +149,7 @@ public class WorkdayController implements Initializable {
             System.out.println(Thread.currentThread());
             ObservableList<Event> eventData = EventDAO.searchEvents(localDate);
             tableEvents.setItems(eventData);
-        }catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -164,7 +164,7 @@ public class WorkdayController implements Initializable {
     }
 
     @FXML
-    private void logout(ActionEvent event){
+    private void logout(ActionEvent event) {
         /*if (loadData.isAlive()){
             try {
                 loadData.join();
@@ -176,7 +176,7 @@ public class WorkdayController implements Initializable {
         openLoginWindow(event);
     }
 
-    private void openLoginWindow(ActionEvent event){
+    private void openLoginWindow(ActionEvent event) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(LoginController.class.getResource("/views/login.fxml"));
             Parent root1 = fxmlLoader.load();
@@ -189,14 +189,14 @@ public class WorkdayController implements Initializable {
 
             StageManager.stages.add(stageLogin);
             StageManager.closeStages(stageLogin);
-            ((Node)(event.getSource())).getScene().getWindow().hide();
-        } catch(Exception e) {
+            ((Node) (event.getSource())).getScene().getWindow().hide();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @FXML
-    public void openEmployeesWindow(ActionEvent event){
+    public void openEmployeesWindow(ActionEvent event) {
         ManageEmployeesController manageEmployeesController = new ManageEmployeesController();
         manageEmployeesController.openEmployeesWindow(event);
     }
@@ -208,7 +208,7 @@ public class WorkdayController implements Initializable {
     }
 
     @FXML
-    private void changeLoginData(){
+    private void changeLoginData() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/ChangeLoginData.fxml"));
             Parent root1 = fxmlLoader.load();
@@ -222,14 +222,14 @@ public class WorkdayController implements Initializable {
             stageChangeLoginData.show();
             stageChangeLoginData.setResizable(false);
 
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
     @FXML
     private void add() {
-        if (validateFields()){
+        if (validateFields()) {
             LocalTime startTime = timePickerStartTime.getValue();
             String insertStart = localDate.toString() + " " + startTime.toString() + ":" + startTime.getSecond();
             Timestamp start = Timestamp.valueOf(insertStart);
@@ -238,27 +238,38 @@ public class WorkdayController implements Initializable {
             String insertEnd = localDate.toString() + " " + endTime.toString() + ":" + endTime.getSecond();
             Timestamp end = Timestamp.valueOf(insertEnd);
 
-            Timestamp lastAdded = start;
-
-            if (!tableEvents.getItems().isEmpty()) {
-                int lastIndex = tableEvents.getItems().size()-1;
-                lastAdded = tableEvents.getItems().get(lastIndex).getEndDate();
-                System.out.println(lastIndex);
-            }
-
-            if ( start.before(end)&&(start.after(lastAdded)||start.equals(lastAdded))&&(start.after(Timestamp.valueOf(localDate + " 00:00:00"))||end.before(Timestamp.valueOf(localDate + " 23:59:59")))) {
+            if (isInTimeRange(start, end)) {
                 int elapsedMinutes = (int) Duration.between(startTime, endTime).toMinutes();
-
                 Task selectedTask = tableViewTasks.getSelectionModel().getSelectedItem();
-
-                Event eventToInsert = new Event(start, end, elapsedMinutes, 0,1, selectedTask);
-                System.out.println(eventToInsert);
-
-                tableEvents.getItems().add(eventToInsert);
+                Event eventToInsert = new Event(start, end, elapsedMinutes, 0, 1, selectedTask);
+                if (tableEvents.getItems().isEmpty()) {
+                    tableEvents.getItems().add(eventToInsert);
+                }else {
+                    if (start.before(tableEvents.getItems().get(0).getStartDate())
+                            && end.before(tableEvents.getItems().get(0).getStartDate())) {
+                        tableEvents.getItems().add(eventToInsert);
+                    }else {
+                        for (int i = 0; i <= tableEvents.getItems().size()-1; i++) {
+                            Event eventToCheck = tableEvents.getItems().get(i);
+                            Timestamp endOfEventToCheck = eventToCheck.getEndDate();
+                            System.out.println(eventToCheck.toString());
+                            System.out.println(i);
+                            if (start.after(endOfEventToCheck) && end.before(tableEvents.getItems().get(i + 1).getStartDate())) {
+                                tableEvents.getItems().add(eventToInsert);
+                                break;
+                            }
+                            if(i==tableEvents.getItems().size()-1&&(start.after(tableEvents.getItems().get(i+1).getEndDate()))){
+                                tableEvents.getItems().add(eventToInsert);
+                            }
+                        }
+                    }
+                }
             }
-            else{Actions.showAlert("Wrong time input");}
         }
+        columnStart.setSortType(TableColumn.SortType.ASCENDING);
+        tableEvents.getSortOrder().add(columnStart);
     }
+
 
     @FXML
     private boolean showDescription() {
@@ -382,6 +393,15 @@ public class WorkdayController implements Initializable {
         }
         catch (IOException e){
             System.out.println(e);
+        }
+    }
+
+    private boolean isInTimeRange(Timestamp start, Timestamp end){
+        if(start.after(Timestamp.valueOf(localDate + " 00:00:00"))||end.before(Timestamp.valueOf(localDate + " 23:59:59")))
+            return true;
+        else{
+            Actions.showAlert("Wrong time input");
+            return false;
         }
     }
 

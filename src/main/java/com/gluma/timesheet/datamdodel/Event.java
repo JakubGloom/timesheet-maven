@@ -1,68 +1,62 @@
 package com.gluma.timesheet.datamdodel;
 
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
+import javafx.beans.property.SimpleIntegerProperty;
 
 import java.sql.Timestamp;
 
-public class Event extends RecursiveTreeObject<Event> implements BaseModel {
+public class Event extends RecursiveTreeObject<Event> implements BaseModel, Comparable<Event> {
 
-    private int idEvent;
+    private SimpleIntegerProperty idEvent;
     private Timestamp startDate;
     private Timestamp endDate;
-    private int time;
-    private int isAccepted = 0;
-    private int idEmployee;
-    private int idTask;
+    private SimpleIntegerProperty time;
+    private SimpleIntegerProperty isAccepted;
+    private SimpleIntegerProperty idEmployee;
 
     private Task task;
     private Employee employee;
 
     public Event(int idEvent, Timestamp startDate, Timestamp endDate, int time, Task task) {
-        this.idEvent = idEvent;
+        this.idEvent = new SimpleIntegerProperty(idEvent);
         this.startDate = startDate;
         this.endDate = endDate;
-        this.time = time;
+        this.time = new SimpleIntegerProperty(time);
         this.task = task;
+    }
+
+    public Event(Employee employee){
+        this.employee=employee;
     }
 
     public Event(Timestamp startDate, Timestamp endDate, int time, int isAccepted, int idEmployee, Task task) {
         this.startDate = startDate;
         this.endDate = endDate;
-        this.time = time;
-        this.isAccepted = isAccepted;
-        this.idEmployee = idEmployee;
+        this.time = new SimpleIntegerProperty(time);
+        this.isAccepted = new SimpleIntegerProperty(isAccepted);
+        this.idEmployee = new SimpleIntegerProperty(idEmployee);
         this.task = task;
     }
 
     public Event(Employee employee, int idEvent, Timestamp startDate, Timestamp endDate, int time, Task task){
-        this.employee = employee;
-        this.idEvent = idEvent;
+        this(employee,idEvent,time,task);
         this.startDate = startDate;
         this.endDate = endDate;
-        this.time = time;
-        this.task = task;
-
     }
 
     public Event(Employee employee, int idEvent, int time, Task task) {
-        this.idEvent = idEvent;
-        this.time = time;
+        this.idEvent = new SimpleIntegerProperty(idEvent);
+        this.time = new SimpleIntegerProperty(time);
         this.task = task;
         this.employee = employee;
     }
 
-    public Event(Employee employee) {
-        this.employee = employee;
-    }
-
-
-
     public int getIdEvent() {
-        return idEvent;
+        return idEvent.get();
     }
 
     public void setIdEvent(int idEvent) {
-        this.idEvent = idEvent;
+        this.idEvent.set(idEvent);
     }
 
     public Timestamp getStartDate() {
@@ -81,33 +75,28 @@ public class Event extends RecursiveTreeObject<Event> implements BaseModel {
         this.endDate = endDate;
     }
 
-    public int getTime() { return time; }
+    public int getTime() {
+        return time.getValue();
+    }
 
     public void setTime(int time) {
-        this.time = time;
+        this.time.set(time);
     }
 
     public int getIsAccepted() {
-        return isAccepted;
+        return isAccepted.get();
     }
 
     public void setIsAccepted(int isAccepted) {
+        this.isAccepted.set(isAccepted);
     }
 
     public int getIdEmployee() {
-        return idEmployee;
+        return idEmployee.get();
     }
 
     public void setIdEmployee(int idEmployee) {
-        this.idEmployee = idEmployee;
-    }
-
-    public int getIdTask() {
-        return idTask;
-    }
-
-    public void setIdTask(int idTask) {
-        this.idTask = idTask;
+        this.idEmployee.set(idEmployee);
     }
 
     public Task getTask() {
@@ -126,12 +115,12 @@ public class Event extends RecursiveTreeObject<Event> implements BaseModel {
         this.employee = employee;
     }
 
-    public String getFullName(){
-        return employee.getFullName();
+    public void addTime(int time){
+        this.time.set(getTime()+time);
     }
 
-    public void addTime(int time){
-        this.time+=time;
+    public String getFullName(){
+        return employee.getFullName();
     }
 
     @Override
@@ -143,9 +132,21 @@ public class Event extends RecursiveTreeObject<Event> implements BaseModel {
                 ", time=" + time +
                 ", isAccepted=" + isAccepted +
                 ", idEmployee=" + idEmployee +
-                ", idTask=" + idTask +
                 ", task=" + task +
                 ", employee=" + employee +
                 '}';
+    }
+
+
+    @Override
+    public int compareTo(Event eventToCompare) {
+        if(this.getStartDate().before(eventToCompare.getStartDate())){
+            return 1;
+        }else{
+            if(this.getStartDate().after(eventToCompare.getStartDate())){
+                return -1;
+            }
+            return 0;
+        }
     }
 }

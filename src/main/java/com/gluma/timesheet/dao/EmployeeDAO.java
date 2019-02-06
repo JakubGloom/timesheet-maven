@@ -36,12 +36,9 @@ private static StringBuilder stringBuilder;
     {
         Employee emp = null;
         if (rs.next()) {
-            emp = new Employee();
-            emp.setIdEmployee(rs.getInt("idEmployee"));
-            emp.setName(rs.getString("Name"));
-            emp.setSurname(rs.getString("Surname"));
-            emp.setLogin(rs.getString("Login"));
-            emp.setPassword(rs.getString("Password"));
+            emp = new Employee(rs.getInt("idEmployee"),rs.getString("Name"),
+                    rs.getString("Surname"), rs.getString("Login"),
+                    rs.getString("Password"));
         }
         return emp;
     }

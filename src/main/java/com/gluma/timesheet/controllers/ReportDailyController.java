@@ -83,8 +83,6 @@ public class ReportDailyController implements Initializable {
             loadEmployees();
         } catch (SQLException e) {
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         }
     }
 

@@ -69,7 +69,7 @@ public class ReportDateController implements Initializable {
 
         columnEmployee.setCellValueFactory(new TreeItemPropertyValueFactory<>("fullName"));
         columnTask.setCellValueFactory(new TreeItemPropertyValueFactory<>("task"));
-        columnMinutes.setCellValueFactory(new TreeItemPropertyValueFactory<>("time"));
+        columnMinutes.setCellValueFactory(new TreeItemPropertyValueFactory<>("Time"));
 
         tableViewEmployeeToPick.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         tableViewEmployeeToPick.getSelectionModel().setCellSelectionEnabled(true);
@@ -161,7 +161,9 @@ public class ReportDateController implements Initializable {
 
             for (Event employeeEventsToInsert : employeeEvents){
                 if (employeeEventsToSum.containsKey(employeeEventsToInsert.getTask().getName())){
+                    System.out.println(employeeEventsToInsert.getTime());
                     employeeEventsToSum.get(employeeEventsToInsert.getTask().getName()).addTime(employeeEventsToInsert.getTime());
+
                 }
 
                 else {
